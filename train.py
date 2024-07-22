@@ -32,6 +32,8 @@ def muti_bce_loss_fusion(d0, d1, d2, d3, d4, d5, d6, labels_v):
 # Set directories and parameters
 model_name = 'u2net' 
 data_dir = os.path.join(os.getcwd(), 'train_data')
+validation_data_dir = os.path.join(os.getcwd(), 'validation_data')
+
 tra_image_dir = os.path.join('DUTS', 'DUTS-TR', 'DUTS-TR', 'im_aug')
 tra_label_dir = os.path.join('DUTS', 'DUTS-TR', 'DUTS-TR', 'gt_aug')
 
@@ -50,10 +52,15 @@ tra_img_name_list = glob.glob(os.path.join(data_dir, tra_image_dir, f'*{image_ex
 tra_lbl_name_list = [os.path.join(data_dir, tra_label_dir, 
                      os.path.splitext(os.path.basename(img_path))[0] + label_ext)
                      for img_path in tra_img_name_list]
-
+val_img_name_list = glob.glob(os.path.join(validation_data_dir, tra_image_dir, f'*{image_ext}'))
+val_lbl_name_list = [os.path.join(data_dir, validation_data_dir, 
+                     os.path.splitext(os.path.basename(img_path))[0] + label_ext)
+                     for img_path in tra_img_name_list]
 print(f"Training images: {len(tra_img_name_list)}")
 print(f"Training labels: {len(tra_lbl_name_list)}")
 
+print(f"Validation images: {len(val_img_name_list)}")
+print(f"Validation labels: {len(val_lbl_name_list)}")
 # Define transforms and datasets
 train_transform = transforms.Compose([
     RescaleT(320),
@@ -71,7 +78,6 @@ train_dataset = SalObjDataset(
     lbl_name_list=tra_lbl_name_list,
     transform=train_transform)
 
-# Assuming you have validation data
 val_dataset = SalObjDataset(
     img_name_list=val_img_name_list,
     lbl_name_list=val_lbl_name_list,
